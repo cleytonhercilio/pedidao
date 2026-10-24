@@ -1,0 +1,14 @@
+{% extends 'pedidos/base.html' %}
+
+{% block titulo %}Cardápio do Pedidão — Pedidão{% endblock %}
+
+{% block conteudo %}
+    <h1>Cardápio do Pedidão</h1>
+    <ul>
+        {% for produto in produtos %}
+            <li class="item">{{ produto.nome }} — <span class="preco">R$ {{ produto.preco|floatformat:2 }}</span></li>
+        {% empty %}
+            <li class="item">Nenhum produto cadastrado.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
