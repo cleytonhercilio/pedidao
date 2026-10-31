@@ -4,6 +4,7 @@
 
 {% block conteudo %}
     <h1>Clientes</h1>
+    <a class="novo" href="{% url 'novo_cliente' %}">+ Novo cliente</a>
     <ul>
         {% for cliente in clientes %}
             <li class="item">{{ cliente.nome }} — {{ cliente.telefone }}</li>

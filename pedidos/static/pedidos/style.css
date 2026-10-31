@@ -56,3 +56,44 @@ ul {
     padding: 2px 6px;
     border-radius: 4px;
 }
+
+.novo {
+    display: inline-block;
+    background: #C0392B;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
+
+.editar {
+    color: #C0392B;
+    margin-left: 8px;
+}
+
+form p {
+    margin: 0 0 12px;
+}
+
+form input,
+form select {
+    font: inherit;
+    padding: 6px 8px;
+}
+
+form button {
+    font: inherit;
+    font-weight: bold;
+    background: #C0392B;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.errorlist {
+    color: #C0392B;
+    padding-left: 18px;
+}

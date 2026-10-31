@@ -94,3 +94,60 @@ class PedidaoTests(TestCase):
         self.assertEqual(Pedido.objects.count(), 3)
         self.produto.refresh_from_db()
         self.assertEqual(self.produto.preco, Decimal('20.00'))
+
+    def test_formularios_abrem_vazios_com_post_e_carimbo(self):
+        for pagina in ['novo_produto', 'novo_pedido', 'novo_cliente']:
+            with self.subTest(pagina=pagina):
+                resposta = self.client.get(reverse(pagina))
+                self.assertContains(resposta, '<form method="post">')
+                self.assertContains(resposta, 'csrfmiddlewaretoken')
+
+    def test_links_de_cadastro_nas_listas(self):
+        for lista, cadastro in [
+            ('cardapio', 'novo_produto'),
+            ('pedidos', 'novo_pedido'),
+            ('clientes', 'novo_cliente'),
+        ]:
+            with self.subTest(lista=lista):
+                self.assertContains(self.client.get(reverse(lista)), f'href="{reverse(cadastro)}"')
+
+    def test_cadastrar_produto_pelo_site(self):
+        resposta = self.client.post(reverse('novo_produto'), {'nome': 'Misto Quente', 'preco': '9.50'})
+        self.assertRedirects(resposta, reverse('cardapio'))
+        self.assertTrue(Produto.objects.filter(nome='Misto Quente', preco=Decimal('9.50')).exists())
+
+    def test_preco_impossivel_volta_com_erro(self):
+        resposta = self.client.post(reverse('novo_produto'), {'nome': 'Combo Família', 'preco': '12345'})
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'Combo Família')
+        self.assertContains(resposta, 'errorlist')
+        self.assertFalse(Produto.objects.filter(nome='Combo Família').exists())
+
+    def test_cadastrar_pedido_pelo_site(self):
+        resposta = self.client.post(reverse('novo_pedido'), {
+            'cliente': self.cliente.pk, 'produto': self.produto.pk, 'quantidade': 5,
+        })
+        self.assertRedirects(resposta, reverse('pedidos'))
+        self.assertTrue(Pedido.objects.filter(cliente=self.cliente, quantidade=5).exists())
+
+    def test_pedido_oferece_clientes_existentes(self):
+        resposta = self.client.get(reverse('novo_pedido'))
+        self.assertContains(resposta, '<select name="cliente"')
+        self.assertContains(resposta, f'<option value="{self.cliente.pk}">Ana Souza</option>')
+
+    def test_cadastrar_cliente_pelo_site(self):
+        resposta = self.client.post(reverse('novo_cliente'), {'nome': 'Bruno', 'telefone': '81 98888-0000'})
+        self.assertRedirects(resposta, reverse('clientes'))
+        self.assertTrue(Cliente.objects.filter(nome='Bruno').exists())
+
+    def test_editar_produto_altera_o_mesmo_registro(self):
+        url = reverse('editar_produto', args=[self.produto.pk])
+        self.assertContains(self.client.get(url), 'value="X-Tudo"')
+        resposta = self.client.post(url, {'nome': 'X-Tudo Duplo', 'preco': '24.00'})
+        self.assertRedirects(resposta, reverse('cardapio'))
+        self.assertEqual(Produto.objects.count(), 1)
+        self.produto.refresh_from_db()
+        self.assertEqual(self.produto.nome, 'X-Tudo Duplo')
+
+    def test_editar_produto_inexistente(self):
+        self.assertEqual(self.client.get(reverse('editar_produto', args=[999])).status_code, 404)

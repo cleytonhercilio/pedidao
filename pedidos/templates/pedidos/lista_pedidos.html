@@ -4,6 +4,7 @@
 
 {% block conteudo %}
     <h1>Pedidos</h1>
+    <a class="novo" href="{% url 'novo_pedido' %}">+ Novo pedido</a>
     <ul>
         {% for pedido in pedidos %}
             <li class="item">{{ pedido.cliente.nome }} pediu <span class="quantidade">{{ pedido.quantidade }}x</span> {{ pedido.produto.nome }} — Preço unitário: <span class="preco">R$ {{ pedido.produto.preco|floatformat:2 }}</span></li>

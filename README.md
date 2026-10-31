@@ -1,6 +1,6 @@
 # Pedidão
 
-Sistema de pedidos de uma lanchonete, implementado até o Sábado 4 dos materiais do Prof. Cleyton.
+Sistema de pedidos de uma lanchonete, implementado até o Sábado 5 dos materiais do Prof. Cleyton.
 O projeto de configurações se chama `setup` neste repositório; corresponde à pasta `pedidao` dos slides.
 
 ## O que faltava e foi implementado
@@ -11,6 +11,7 @@ O projeto de configurações se chama `setup` neste repositório; corresponde à
 | Sábado 2 | Produto com nome e preço decimal; Admin; URLs do projeto e app; views e templates de `/cardapio/` e `/clientes/`. |
 | Sábado 3 | Pedido com cliente, produto e quantidade; Admin; `/pedidos/`; menu com rotas nomeadas nas três páginas. |
 | Sábado 4 | Menu compartilhado no `base.html`; três páginas com `extends` e `block conteudo`; CSS em `static/pedidos/style.css`; cartões e destaque de preço e quantidade. |
+| Sábado 5 | `forms.py` com `ProdutoForm` e `PedidoForm`; páginas `/produtos/novo/` e `/pedidos/novo/` com `method="post"` e `{% csrf_token %}`; views que tratam GET e POST, validam com `is_valid()` e redirecionam; links "+ Novo" no cardápio e na lista de pedidos. Degraus: `/clientes/novo/` e edição de produto em `/produtos/<id>/editar/` com `instance=`. |
 
 Também foram incluídas as extensões dos slides: mensagens de lista vazia e preço unitário do produto na lista de pedidos.
 A raiz `/` redireciona ao cardápio. As configurações usam português brasileiro e o fuso de São Paulo.
@@ -24,8 +25,13 @@ As três tabelas estão em uma migração inicial porque não havia migrações 
 - `cliente` usa `CASCADE`: excluir um cliente exclui suas comandas, conforme a regra definida na aula.
 - `produto` usa `PROTECT`: um produto vendido não pode ser excluído enquanto houver pedidos relacionados.
 
-O cadastro, a edição e a exclusão são feitos pelo Admin. As páginas listam os dados.
-Formulários públicos, vários produtos por pedido, data e total ficam para aulas posteriores, como indicado nos PDFs.
+Produtos, clientes e pedidos são cadastrados pelo site, sem o Admin. Produtos também podem ser editados pelo site. A exclusão continua no Admin.
+Login, vários produtos por pedido, data e total ficam para aulas posteriores, como indicado nos PDFs.
+
+## Formulários da aula 5
+
+No formulário de pedido, os campos `cliente` e `produto` viraram listas de escolha porque são `ForeignKey`: o pedido aponta para uma ficha que já existe, então o Django só oferece os clientes e produtos cadastrados.
+Por enquanto, qualquer pessoa que souber o endereço consegue cadastrar. O login fica para o Sábado 6.
 
 ## Visual da aula 4
 
@@ -52,6 +58,9 @@ O comando `carregar_exemplos` pode ser repetido: adiciona os três clientes e pr
 - Cardápio: http://127.0.0.1:8000/cardapio/
 - Clientes: http://127.0.0.1:8000/clientes/
 - Pedidos: http://127.0.0.1:8000/pedidos/
+- Novo produto: http://127.0.0.1:8000/produtos/novo/
+- Novo pedido: http://127.0.0.1:8000/pedidos/novo/
+- Novo cliente: http://127.0.0.1:8000/clientes/novo/
 - Administração: http://127.0.0.1:8000/admin/
 
 Para preparar outra máquina, crie a venv e instale as dependências antes dos comandos acima:
@@ -68,6 +77,6 @@ py -m venv venv
 .\venv\Scripts\python.exe manage.py test
 ```
 
-Os testes cobrem páginas, navegação, listas vazias, cadastro no Admin, regras de exclusão e carga repetida de exemplos. Usam um banco de testes separado.
+Os testes cobrem páginas, navegação, listas vazias, formulários (cadastro, validação e edição), cadastro no Admin, regras de exclusão e carga repetida de exemplos. Usam um banco de testes separado.
 
-O projeto está configurado para estudo local, com `DEBUG=True`. O envio ao GitHub descrito nos slides depende de um repositório escolhido pelo aluno e não foi realizado.
+O projeto está configurado para estudo local, com `DEBUG=True`. O código está publicado em https://github.com/cleytonhercilio/pedidao.

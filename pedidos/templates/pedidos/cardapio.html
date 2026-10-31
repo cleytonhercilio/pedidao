@@ -4,9 +4,10 @@
 
 {% block conteudo %}
     <h1>Cardápio do Pedidão</h1>
+    <a class="novo" href="{% url 'novo_produto' %}">+ Novo produto</a>
     <ul>
         {% for produto in produtos %}
-            <li class="item">{{ produto.nome }} — <span class="preco">R$ {{ produto.preco|floatformat:2 }}</span></li>
+            <li class="item">{{ produto.nome }} — <span class="preco">R$ {{ produto.preco|floatformat:2 }}</span> <a class="editar" href="{% url 'editar_produto' produto.id %}">Editar</a></li>
         {% empty %}
             <li class="item">Nenhum produto cadastrado.</li>
         {% endfor %}
